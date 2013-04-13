@@ -39,7 +39,7 @@ class RedisStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testSupportsPartialUpdates()
     {
-        $this->assertFalse($this->storage->supportsPartialUpdates());
+        $this->assertTrue($this->storage->supportsPartialUpdates());
     }
 
     public function testSupportsCompositePrimaryKeys()
@@ -62,7 +62,7 @@ class RedisStorageTest extends \PHPUnit_Framework_TestCase
         $dbDataset = array();
 
         $this->redis->expects($this->once())
-            ->method('set')
+            ->method('hmset')
             ->will($this->returnCallback(function($key, $data) use (&$dbDataset) {
                 $dbDataset[] = array('key' => $key, 'value' => $data);
             }));
@@ -70,7 +70,7 @@ class RedisStorageTest extends \PHPUnit_Framework_TestCase
         $this->storage->insert('redis', '1', $data);
 
         $this->assertCount(1, $dbDataset);
-        $this->assertEquals(array(array('key' => $this->storage->getKeyName('1'), 'value' => json_encode($data))), $dbDataset);
+        $this->assertEquals(array(array('key' => $this->storage->getKeyName('1'), 'value' => $data)), $dbDataset);
     }
 
     public function testUpdate()
@@ -84,16 +84,15 @@ class RedisStorageTest extends \PHPUnit_Framework_TestCase
         $dbDataset = array();
 
         $this->redis->expects($this->once())
-            ->method('set')
+            ->method('hmset')
             ->will($this->returnCallback(function($key, $data) use (&$dbDataset) {
                 $dbDataset[] = array('key' => $key, 'value' => $data);
             }));
 
-
          $this->storage->update('redis', '1', $data);
 
          $this->assertCount(1, $dbDataset);
-         $this->assertEquals(array(array('key' => $this->storage->getKeyName('1'), 'value' => json_encode($data))), $dbDataset);
+         $this->assertEquals(array(array('key' => $this->storage->getKeyName('1'), 'value' => $data)), $dbDataset);
     }
 
     public function testGetName()
