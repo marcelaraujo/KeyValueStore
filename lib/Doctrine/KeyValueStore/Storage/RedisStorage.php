@@ -64,7 +64,7 @@ class RedisStorage implements Storage
      */
     public function supportsPartialUpdates()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -88,7 +88,7 @@ class RedisStorage implements Storage
      */
     public function insert($storageName, $key, array $data)
     {
-        $this->client->set($this->getKeyName($key), json_encode($data));
+        $this->client->hmset($this->getKeyName($key), $data);
     }
 
     /**
@@ -96,7 +96,7 @@ class RedisStorage implements Storage
      */
     public function update($storageName, $key, array $data)
     {
-        $this->client->set($this->getKeyName($key), json_encode($data));
+        $this->client->hmset($this->getKeyName($key), $data);
     }
 
     /**
@@ -121,7 +121,7 @@ class RedisStorage implements Storage
             throw new NotFoundException();
         }
 
-        return json_decode($this->client->get($key));
+        return $this->client->hgetall($key);
     }
 
     /**
