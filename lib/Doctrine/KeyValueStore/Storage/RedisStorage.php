@@ -21,6 +21,7 @@
 namespace Doctrine\KeyValueStore\Storage;
 
 use Doctrine\KeyValueStore\NotFoundException;
+use InvalidArgumentException;
 
 /**
  * @author Marcel Araujo <admin@marcelaraujo.me>
@@ -28,7 +29,7 @@ use Doctrine\KeyValueStore\NotFoundException;
 class RedisStorage implements Storage
 {
     /**
-     * @var \Redis
+     * @var \Redis|Predis\Client
      */
     protected $client;
 
@@ -47,11 +48,15 @@ class RedisStorage implements Storage
     /**
      * Constructor
      *
-     * @param \Redis $redis
+     * @param \Redis|Predis\Client $redis
      * @param array $dbOptions
      */
-    public function __construct($redis, $dbOptions = array())
+    public function __construct($redis, array $dbOptions = array())
     {
+        if (!$redis instanceof \Redis || !$redis instanceof \Predis\Client) {
+            throw new InvalidArgumentException('Only redis and Predis are supported');
+        }
+
         $this->client = $redis;
 
         $this->dbOptions = array_merge(array(
