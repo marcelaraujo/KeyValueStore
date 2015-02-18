@@ -1,9 +1,7 @@
 {
     "name": "doctrine/key-value-store",
-    "require": {
-        "doctrine/common": "*"
-    },
     "require-dev": {
+        "phpunit/phpunit": "~4.4.5",
         "riak/riak-client": "dev-master",
         "microsoft/windowsazure": "dev-master"
     },          
@@ -24,5 +22,8 @@
         "psr-0": {
             "Doctrine\\KeyValueStore\\": "lib/"
         }
+    },
+    "require": {
+        "doctrine/common": "~2.4"
     }
 }
